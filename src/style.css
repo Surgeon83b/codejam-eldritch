@@ -1,14 +1,15 @@
 .hello {
-    color: red;
-  }
+  color: red;
+}
 
 .body {
+  margin-top: 30px;
   background-image: url('../assets/home.png');
 }
 
 #root {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .ancients-container {
@@ -18,13 +19,18 @@
   grid-template-columns: 45% 45%;
   grid-gap: 10%;
 }
+
 .ancient-card {
   border: 2px solid darkmagenta;
   height: 260px;
   width: 200px;
   background-size: contain;
- /* width: 45%;
+  /* width: 45%;
   height: 45%;*/
+}
+
+.ancient-card:hover {
+  cursor: pointer;
 }
 
 .dificulty {
@@ -32,18 +38,75 @@
   border-radius: 5%;
   border: 2px solid green;
   border-color: blue;
-  font-size: 44pt;
+  font-size: 36px;
+  height: 40px;
+  padding: 5px;
+  margin: 5px;
+}
+.dificulty:hover {
+  cursor: pointer;
 }
 
-#Azathoth {
+#azathoth {
   background-image: url('../assets/Ancients/Azathoth.png');
 }
-#Cthulthu {
+
+#cthulhu {
   background-image: url('../assets/Ancients/Cthulthu.png');
 }
-#IogSothoth {
+
+#iogSothoth {
   background-image: url('../assets/Ancients/iogSothoth.png');
 }
-#ShubNiggurath {
+
+#shubNiggurath {
   background-image: url('../assets/Ancients/ShubNiggurath.png');
+}
+
+.cur-ancient {
+  border-radius: 5%;
+  border: 2px solid green;
+  border-color: blue;
+  font-size: 36pt;
+  background-color: chartreuse;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.dots-container {
+  align-items: center;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.dot {
+  align-items: center;
+  border-radius: 50%;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
+  color: white;
+}
+
+.dot.green {
+  background-color: green;
+}
+
+.dot.brown {
+  background-color: brown;
+}
+
+.dot.blue {
+  background-color: blue;
+}
+
+.difficulty-container {
+  width: 30%;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
