@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import './style.css';
+import '../assets/Ancients/index';
 
 function component() {
     const element = document.createElement('div');

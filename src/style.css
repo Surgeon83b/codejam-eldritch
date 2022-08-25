@@ -1,3 +1,49 @@
 .hello {
     color: red;
   }
+
+.body {
+  background-image: url('../assets/home.png');
+}
+
+#root {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ancients-container {
+  border: 2px solid red;
+  display: grid;
+  grid-template-rows: 45% 45%;
+  grid-template-columns: 45% 45%;
+  grid-gap: 10%;
+}
+.ancient-card {
+  border: 2px solid darkmagenta;
+  height: 260px;
+  width: 200px;
+  background-size: contain;
+ /* width: 45%;
+  height: 45%;*/
+}
+
+.dificulty {
+  color: aqua;
+  border-radius: 5%;
+  border: 2px solid green;
+  border-color: blue;
+  font-size: 44pt;
+}
+
+#Azathoth {
+  background-image: url('../assets/Ancients/Azathoth.png');
+}
+#Cthulthu {
+  background-image: url('../assets/Ancients/Cthulthu.png');
+}
+#IogSothoth {
+  background-image: url('../assets/Ancients/iogSothoth.png');
+}
+#ShubNiggurath {
+  background-image: url('../assets/Ancients/ShubNiggurath.png');
+}
