@@ -4,7 +4,7 @@ import '../assets/Ancients/index';
 import difficulties from '../data/difficulties';
 import ancientsData from '../data/ancients';
 import { brownCards, blueCards, greenCards } from '../data/mythicCards';
-import { fillDots, stageCards, cardsCount } from './utils'
+import { fillDots, stageCards, cardsCount, modifiedSetOfCards } from './utils'
 
 ///// --- Initialization of Ancient Mode and Dificulty --- //////
 let currentAncient = {};
@@ -18,7 +18,7 @@ let setOfCards = {};
 let finalCards = [];
 let stageLengths = [];
 let counter = 0;
-
+//////////////////////////////////////////////////////////////////
 const stage1 = document.querySelector('.stage1');
 const stage2 = document.querySelector('.stage2');
 const stage3 = document.querySelector('.stage3');
@@ -84,6 +84,8 @@ function nextCard() {
 }
 
 diffContainer.addEventListener('click', diffClick);
+document.querySelector('.shuffle').addEventListener('click', shuffle);
+
 const diffContainerChildren = diffContainer.children;
 for (let i = 0; i <= 4; i++) {
   diffContainerChildren[i].innerHTML = difficulties[i].name;
@@ -120,8 +122,6 @@ function diffClick(e) {
   lastCard.innerHTML = '';
 }
 
-document.querySelector('.shuffle').addEventListener('click', shuffle);
-
 function shuffle(mode) {
   deck.style.visibility = 'visible';
   document.querySelector('.deck-container').style.visibility = 'visible';
@@ -133,105 +133,11 @@ function shuffle(mode) {
   stage3.style.backgroundColor = 'white';
   stage3.querySelector('.stage-text').innerHTML = 'Stage 3';
 
-  setOfCards = setTotalCards(modifiedSetOfCards(diff), numberOfCards);
+  setOfCards = setTotalCards(modifiedSetOfCards(diff, numberOfCards), numberOfCards);
   finalCards = stageCards(setOfCards, currentAncient, stageLengths);
   console.log('finalCards', finalCards);
   lastCard.style.backgroundImage = 'none';
   lastCardName.innerHTML = '';
-}
-
-function modifiedSetOfCards(diff) {
-  switch (diff) {
-    case 'very-easy': {
-      let greenEasy = greenCards.filter(val => val.difficulty == 'easy');
-      let greenNormal = greenCards.filter(val => val.difficulty == 'normal');
-      if (numberOfCards.greenCards > greenEasy.length) {
-        greenNormal = _.shuffle(greenNormal);
-        greenNormal = greenNormal.slice(0, numberOfCards.greenCards - greenEasy.length);
-        greenEasy.push(...greenNormal);
-      }
-
-      let brownEasy = brownCards.filter(val => val.difficulty == 'easy');
-      let brownNormal = brownCards.filter(val => val.difficulty == 'normal');
-      console.log(numberOfCards.brownCards);
-      console.log(brownEasy.length);
-      if (numberOfCards.brownCards > brownEasy.length) {
-        brownNormal = _.shuffle(brownNormal);
-
-        brownNormal = brownNormal.slice(0, numberOfCards.brownCards - brownEasy.length);
-        brownEasy.push(...brownNormal);
-      }
-
-      let blueEasy = blueCards.filter(val => val.difficulty == 'easy');
-      let blueNormal = blueCards.filter(val => val.difficulty == 'normal');
-      if (numberOfCards.blueCards > blueEasy.length) {
-        blueNormal = _.shuffle(blueNormal);
-        blueNormal = blueNormal.slice(0, numberOfCards.blueCards - blueEasy.length);
-        blueEasy.push(...blueNormal);
-      }
-
-      return {
-        greenCards: greenEasy,
-        brownCards: brownEasy,
-        blueCards: blueEasy,
-      }
-    }
-    case 'easy':
-      return {
-        greenCards: greenCards.filter(val => val.difficulty !== 'hard'),
-        brownCards: brownCards.filter(val => val.difficulty !== 'hard'),
-        blueCards: blueCards.filter(val => val.difficulty !== 'hard'),
-      }
-    case 'normal':
-      return {
-        greenCards: greenCards,
-        brownCards: brownCards,
-        blueCards: blueCards
-      }
-    case 'hard':
-      return {
-        greenCards: greenCards.filter(val => val.difficulty !== 'easy'),
-        brownCards: brownCards.filter(val => val.difficulty !== 'easy'),
-        blueCards: blueCards.filter(val => val.difficulty !== 'easy'),
-      }
-    case 'very-hard': {
-      let greenHard = greenCards.filter(val => val.difficulty == 'hard');
-      let greenNormal = greenCards.filter(val => val.difficulty == 'normal');
-      if (numberOfCards.greenCards > greenHard.length) {
-        greenNormal = _.shuffle(greenNormal);
-        greenNormal = greenNormal.slice(0, numberOfCards.greenCards - greenHard.length);
-        greenHard.push(...greenNormal);
-      }
-
-      let brownHard = brownCards.filter(val => val.difficulty == 'hard');
-      let brownNormal = brownCards.filter(val => val.difficulty == 'normal');
-      if (numberOfCards.brownCards > brownHard.length) {
-        brownNormal = _.shuffle(brownNormal);
-        brownNormal = brownNormal.slice(0, numberOfCards.brownCards - brownHard.length);
-        brownHard.push(...brownNormal);
-      }
-
-      let blueHard = blueCards.filter(val => val.difficulty == 'hard');
-      let blueNormal = blueCards.filter(val => val.difficulty == 'normal');
-      if (numberOfCards.blueCards > blueHard.length) {
-        blueNormal = _.shuffle(blueNormal);
-        blueNormal = blueNormal.slice(0, numberOfCards.blueCards - blueHard.length);
-        blueHard.push(...blueNormal);
-      }
-
-      return {
-        greenCards: greenHard,
-        brownCards: brownHard,
-        blueCards: blueHard,
-      }
-    }
-    default:
-      return {
-        greenCards: greenCards,
-        brownCards: brownCards,
-        blueCards: blueCards
-      }
-  }
 }
 
 function setTotalCards(cards, colorsCount) {
