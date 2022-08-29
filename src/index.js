@@ -45,7 +45,7 @@ deck.addEventListener('click', nextCard);
 
 function nextCard() {
   // console.log(finalCards.pop().cardFace);
-  // lastCard.style.backgroundImage = `url(finalCards.pop().cardFace)`;
+  lastCard.style.backgroundImage = `url(finalCards.pop().cardFace)`;
   let curCard = {};
   let curStage = {};
   curCard = finalCards.pop();
