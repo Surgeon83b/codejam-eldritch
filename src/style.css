@@ -140,3 +140,7 @@
 .deck-container {
   visibility: hidden;
 }
+
+.active {
+  background-color: chartreuse;
+}

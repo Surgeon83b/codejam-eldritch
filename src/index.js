@@ -5,19 +5,6 @@ import difficulties from '../data/difficulties';
 import ancientsData from '../data/ancients';
 import { brownCards, blueCards, greenCards } from '../data/mythicCards';
 
-function component() {
-  const element = document.createElement('div');
-
-  // Lodash, currently included via a script, is required for this line to work
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-  element.classList.add('hello');
-
-  return element;
-}
-let a = _.shuffle(ancientsData);
-console.log(a);
-//document.body.appendChild(component());
-
 ///// --- Initialization of Ancient Mode and Dificulty --- //////
 let currentAncient = {};
 let diff = '';
@@ -35,23 +22,47 @@ const stage1 = document.querySelector('.stage1');
 const stage2 = document.querySelector('.stage2');
 const stage3 = document.querySelector('.stage3');
 
+const curAncient = document.querySelector('.cur-ancient');
+const diffContainer = document.querySelector('.difficulty-container');
+
 const ancients = document.querySelector('.ancients-container');
 ancients.addEventListener('click', ancientsClick);
-let mode = 0;
 const deck = document.querySelector('.deck');
 const lastCard = document.querySelector('.last-card');
+const lastCardName = document.querySelector('.last-card-name');
 deck.style.backgroundImage = `url('../assets/mythicCardBackground.png')`;
 deck.addEventListener('click', nextCard);
 
+function resetAll() {
+  counter = 0;
+  stageLengths = [];
+  finalCards = [];
+  setOfCards = {};
+  diff = '';
+  numberOfCards = {
+    greenCards: 0,
+    brownCards: 0,
+    blueCards: 0
+  };
+  deck.style.visibility = 'hidden';
+  document.querySelector('.deck-container').style.visibility = 'hidden';
+
+  for (let i = 0; i <= 4; i++) {
+    diffContainerChildren[i].classList.remove('active');
+  }
+  lastCard.innerHTML = '';
+}
+
 function nextCard() {
   // console.log(finalCards.pop().cardFace);
-  lastCard.style.backgroundImage = `url(finalCards.pop().cardFace)`;
+
+  lastCard.style.backgroundImage = `url(${finalCards[finalCards.length-1].cardFace})`;
   let curCard = {};
   let curStage = {};
   curCard = finalCards.pop();
   counter++;
 
-  lastCard.innerHTML = curCard.id;
+  lastCardName.innerHTML = curCard.id + curCard.difficulty;
   if (counter <= stageLengths[0]) curStage = stage1
   else if (counter > stageLengths[0] + stageLengths[1]) curStage = stage3
   else curStage = stage2;
@@ -60,13 +71,7 @@ function nextCard() {
 }
 
 
-const curAncient = document.querySelector('.cur-ancient');
-const diffContainer = document.querySelector('.difficulty-container');
-
-
-
 diffContainer.addEventListener('click', diffClick);
-//console.log(diffContainer.childNodes);
 const diffContainerChildren = diffContainer.children;
 for (let i = 0; i <= 4; i++) {
   diffContainerChildren[i].innerHTML = difficulties[i].name;
@@ -75,28 +80,11 @@ for (let i = 0; i <= 4; i++) {
 
 function ancientsClick(e) {
   const tar = e.target;
-
-  switch (tar.id) {
-    case 'azathoth': {
-      mode = 1;
-      break;
-    }
-    case 'cthulthu': {
-      mode = 2;
-      break;
-    }
-    case 'iogSothoth': {
-      mode = 3;
-      break;
-    }
-    case 'shubNiggurath': {
-      mode = 4;
-      break;
-    }
-  }
+//resetAll();
+document.querySelector('.shuffle').style.visibility = 'hidden';
+  
   curAncient.innerHTML = tar.id;
   currentAncient = ancientsData.find(el => el.id == tar.id);
-  console.log(currentAncient);
   fillDots(currentAncient);
   numberOfCards = cardsCount(currentAncient);
   console.log(numberOfCards);
@@ -104,9 +92,21 @@ function ancientsClick(e) {
 }
 
 function diffClick(e) {
+ // resetAll();
+ // fillDots(currentAncient);
+ // numberOfCards = cardsCount(currentAncient);
+  let curDiff = e.target;
+  console.log(curDiff);
   diff = e.target.id;
+  for (let i = 0; i <= 4; i++) {
+    diffContainerChildren[i].classList.remove('active');
+  }
+  
+  curDiff.classList.add('active');
+  diffContainer.classList.remove('active');
   console.log(diff);
   document.querySelector('.shuffle').style.visibility = 'visible';
+  lastCard.innerHTML = '';
 }
 
 document.querySelector('.shuffle').addEventListener('click', shuffle);
@@ -117,7 +117,7 @@ function shuffle(mode) {
   document.querySelector('.deck-container').style.visibility = 'visible';
   setOfCards = setTotalCards(modifiedSetOfCards(diff), numberOfCards); console.log('setOfCards', setOfCards);
   finalCards = stageCards(setOfCards, currentAncient);
-  console.log(finalCards);
+  console.log('finalCards', finalCards);
 }
 
 function totalCards(ancient) {
