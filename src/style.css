@@ -15,8 +15,8 @@
 .ancients-container {
   border: 2px solid red;
   display: grid;
-  grid-template-rows: 45% 45%;
-  grid-template-columns: 45% 45%;
+  grid-template-rows: 40% 40%;
+  grid-template-columns: 40% 40%;
   grid-gap: 10%;
 }
 
