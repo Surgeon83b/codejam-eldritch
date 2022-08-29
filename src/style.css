@@ -43,6 +43,7 @@
   padding: 5px;
   margin: 5px;
 }
+
 .dificulty:hover {
   cursor: pointer;
 }
@@ -109,9 +110,33 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  visibility: hidden;
 }
 
 .shuffle {
   margin-top: 30px;
   align-self: center;
+  visibility: hidden;
+
+}
+
+.deck, .last-card {
+  margin-top: 20px;
+  background-size: contain;
+  height: 190px;
+  width: 130px;
+}
+
+.deck:hover {
+  cursor: pointer;
+}
+
+.settings {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.deck-container {
+  visibility: hidden;
 }

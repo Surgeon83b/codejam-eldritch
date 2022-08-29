@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { last } from 'lodash';
 import './style.css';
 import '../assets/Ancients/index';
 import difficulties from '../data/difficulties';
@@ -18,19 +18,52 @@ let a = _.shuffle(ancientsData);
 console.log(a);
 //document.body.appendChild(component());
 
+///// --- Initialization of Ancient Mode and Dificulty --- //////
+let currentAncient = {};
+let diff = '';
+let numberOfCards = {
+  greenCards: 0,
+  brownCards: 0,
+  blueCards: 0
+};
+let setOfCards = {};
+let finalCards = [];
+let stageLengths = [];
+let counter = 0;
+
+const stage1 = document.querySelector('.stage1');
+const stage2 = document.querySelector('.stage2');
+const stage3 = document.querySelector('.stage3');
+
 const ancients = document.querySelector('.ancients-container');
 ancients.addEventListener('click', ancientsClick);
 let mode = 0;
+const deck = document.querySelector('.deck');
+const lastCard = document.querySelector('.last-card');
+deck.style.backgroundImage = `url('../assets/mythicCardBackground.png')`;
+deck.addEventListener('click', nextCard);
+
+function nextCard() {
+  // console.log(finalCards.pop().cardFace);
+  // lastCard.style.backgroundImage = `url(finalCards.pop().cardFace)`;
+  let curCard = {};
+  let curStage = {};
+  curCard = finalCards.pop();
+  counter++;
+
+  lastCard.innerHTML = curCard.id;
+  if (counter <= stageLengths[0]) curStage = stage1
+  else if (counter > stageLengths[0] + stageLengths[1]) curStage = stage3
+  else curStage = stage2;
+  curStage.querySelector('.' + curCard.color).innerHTML--;
+  if (counter == stageLengths[0] + stageLengths[1] + stageLengths[2]) deck.style.visibility = 'hidden';
+}
 
 
 const curAncient = document.querySelector('.cur-ancient');
 const diffContainer = document.querySelector('.difficulty-container');
 
-///// --- Initialization of Ancient Mode and Dificulty --- //////
-let currentAncient = {};
-let diff = '';
-let numberOfCards = {};
-let setOfCards = {};
+
 
 diffContainer.addEventListener('click', diffClick);
 //console.log(diffContainer.childNodes);
@@ -67,19 +100,24 @@ function ancientsClick(e) {
   fillDots(currentAncient);
   numberOfCards = cardsCount(currentAncient);
   console.log(numberOfCards);
+  document.querySelector('.difficulty-container').style.visibility = 'visible';
 }
 
 function diffClick(e) {
   diff = e.target.id;
   console.log(diff);
+  document.querySelector('.shuffle').style.visibility = 'visible';
 }
 
 document.querySelector('.shuffle').addEventListener('click', shuffle);
 
 function shuffle(mode) {
-  console.log(modifiedSetOfCards(diff));
-  setOfCards = setTotalCards(modifiedSetOfCards(diff), numberOfCards); console.log(setOfCards);
-  console.log(stageCards(setOfCards, currentAncient));
+  // console.log(modifiedSetOfCards(diff));
+  deck.style.visibility = 'visible';
+  document.querySelector('.deck-container').style.visibility = 'visible';
+  setOfCards = setTotalCards(modifiedSetOfCards(diff), numberOfCards); console.log('setOfCards', setOfCards);
+  finalCards = stageCards(setOfCards, currentAncient);
+  console.log(finalCards);
 }
 
 function totalCards(ancient) {
@@ -102,12 +140,89 @@ function cardsCount(ancient) {
 
 function modifiedSetOfCards(diff) {
   switch (diff) {
+    case 'very-easy': {
+      let greenEasy = greenCards.filter(val => val.difficulty == 'easy');
+      let greenNormal = greenCards.filter(val => val.difficulty == 'normal');
+      if (numberOfCards.greenCards > greenEasy.length) {
+        greenNormal = _.shuffle(greenNormal);
+        greenNormal = greenNormal.slice(0, numberOfCards.greenCards - greenEasy.length);
+        greenEasy.push(...greenNormal);
+      }
+
+      let brownEasy = brownCards.filter(val => val.difficulty == 'easy');
+      let brownNormal = brownCards.filter(val => val.difficulty == 'normal');
+      console.log(numberOfCards.brownCards);
+      console.log(brownEasy.length);
+      if (numberOfCards.brownCards > brownEasy.length) {
+        brownNormal = _.shuffle(brownNormal);
+
+        brownNormal = brownNormal.slice(0, numberOfCards.brownCards - brownEasy.length);
+        brownEasy.push(...brownNormal);
+      }
+
+      let blueEasy = blueCards.filter(val => val.difficulty == 'easy');
+      let blueNormal = blueCards.filter(val => val.difficulty == 'normal');
+      if (numberOfCards.blueCards > blueEasy.length) {
+        blueNormal = _.shuffle(blueNormal);
+        blueNormal = blueNormal.slice(0, numberOfCards.blueCards - blueEasy.length);
+        blueEasy.push(...blueNormal);
+      }
+
+      return {
+        greenCards: greenEasy,
+        brownCards: brownEasy,
+        blueCards: blueEasy,
+      }
+    }
+    case 'easy':
+      return {
+        greenCards: greenCards.filter(val => val.difficulty !== 'hard'),
+        brownCards: brownCards.filter(val => val.difficulty !== 'hard'),
+        blueCards: blueCards.filter(val => val.difficulty !== 'hard'),
+      }
     case 'normal':
       return {
         greenCards: greenCards,
         brownCards: brownCards,
         blueCards: blueCards
       }
+    case 'hard':
+      return {
+        greenCards: greenCards.filter(val => val.difficulty !== 'easy'),
+        brownCards: brownCards.filter(val => val.difficulty !== 'easy'),
+        blueCards: blueCards.filter(val => val.difficulty !== 'easy'),
+      }
+    case 'very-hard': {
+      let greenHard = greenCards.filter(val => val.difficulty == 'hard');
+      let greenNormal = greenCards.filter(val => val.difficulty == 'normal');
+      if (numberOfCards.greenCards > greenHard.length) {
+        greenNormal = _.shuffle(greenNormal);
+        greenNormal = greenNormal.slice(0, numberOfCards.greenCards - greenHard.length);
+        greenHard.push(...greenNormal);
+      }
+
+      let brownHard = brownCards.filter(val => val.difficulty == 'hard');
+      let brownNormal = brownCards.filter(val => val.difficulty == 'normal');
+      if (numberOfCards.brownCards > brownHard.length) {
+        brownNormal = _.shuffle(brownNormal);
+        brownNormal = brownNormal.slice(0, numberOfCards.brownCards - brownHard.length);
+        brownHard.push(...brownNormal);
+      }
+
+      let blueHard = blueCards.filter(val => val.difficulty == 'hard');
+      let blueNormal = blueCards.filter(val => val.difficulty == 'normal');
+      if (numberOfCards.blueCards > blueHard.length) {
+        blueNormal = _.shuffle(blueNormal);
+        blueNormal = blueNormal.slice(0, numberOfCards.blueCards - blueHard.length);
+        blueHard.push(...blueNormal);
+      }
+
+      return {
+        greenCards: greenHard,
+        brownCards: brownHard,
+        blueCards: blueHard,
+      }
+    }
     default:
       return {
         greenCards: greenCards,
@@ -132,12 +247,14 @@ function stageCards(cards, curAncient) {
   const finalCards = {
     stage1: {},
     stage2: {},
-    stage3: {}
+    stage3: {},
+    cards: []
   };
   const curCards = {};
   Object.assign(curCards, cards);
- //console.log(curAncient);
- /////////// FIRST STAGE //////////////
+  //console.log(curAncient);
+
+  /////////// FIRST STAGE //////////////
   curCards.greenCards = _.shuffle(curCards.greenCards);
   finalCards.stage1.greenCards = curCards.greenCards.slice(0, curAncient.firstStage.greenCards);
   curCards.greenCards = curCards.greenCards.slice(curAncient.firstStage.greenCards, curCards.greenCards.length);
@@ -150,12 +267,13 @@ function stageCards(cards, curAncient) {
   finalCards.stage1.blueCards = curCards.blueCards.slice(0, curAncient.firstStage.blueCards);
   curCards.blueCards = curCards.blueCards.slice(curAncient.firstStage.blueCards, curCards.blueCards.length);
 
-  finalCards.stage1.cards = finalCards.stage1.greenCards;
+  finalCards.stage1.cards = finalCards.stage1.greenCards.slice();
   finalCards.stage1.cards.push(...finalCards.stage1.brownCards);
   finalCards.stage1.cards.push(...finalCards.stage1.blueCards);
-  _.shuffle(finalCards.stage1.cards);
-  console.log(finalCards.stage1.cards);
-/////////// SECOND STAGE //////////////
+  finalCards.stage1.cards = _.shuffle(finalCards.stage1.cards);
+  stageLengths[0] = finalCards.stage1.cards.length;
+
+  /////////// SECOND STAGE //////////////
   curCards.greenCards = _.shuffle(curCards.greenCards);
   finalCards.stage2.greenCards = curCards.greenCards.slice(0, curAncient.secondStage.greenCards);
   curCards.greenCards = curCards.greenCards.slice(curAncient.secondStage.greenCards, curCards.greenCards.length);
@@ -168,7 +286,13 @@ function stageCards(cards, curAncient) {
   finalCards.stage2.blueCards = curCards.blueCards.slice(0, curAncient.secondStage.blueCards);
   curCards.blueCards = curCards.blueCards.slice(curAncient.secondStage.blueCards, curCards.blueCards.length);
 
-/////////// THIRD STAGE //////////////
+  finalCards.stage2.cards = finalCards.stage2.greenCards.slice();
+  finalCards.stage2.cards.push(...finalCards.stage2.brownCards);
+  finalCards.stage2.cards.push(...finalCards.stage2.blueCards);
+  finalCards.stage2.cards = _.shuffle(finalCards.stage2.cards);
+  stageLengths[1] = finalCards.stage2.cards.length;
+
+  /////////// THIRD STAGE //////////////
   curCards.greenCards = _.shuffle(curCards.greenCards);
   finalCards.stage3.greenCards = curCards.greenCards.slice(0, curAncient.thirdStage.greenCards);
   curCards.greenCards = curCards.greenCards.slice(curAncient.thirdStage.greenCards, curCards.greenCards.length);
@@ -181,17 +305,22 @@ function stageCards(cards, curAncient) {
   finalCards.stage3.blueCards = curCards.blueCards.slice(0, curAncient.thirdStage.blueCards);
   curCards.blueCards = curCards.blueCards.slice(curAncient.thirdStage.blueCards, curCards.blueCards.length);
 
+  finalCards.stage3.cards = finalCards.stage3.greenCards.slice();
+  finalCards.stage3.cards.push(...finalCards.stage3.brownCards);
+  finalCards.stage3.cards.push(...finalCards.stage3.blueCards);
+  finalCards.stage3.cards = _.shuffle(finalCards.stage3.cards);
+  stageLengths[2] = finalCards.stage3.cards.length;
 
-  console.log(curCards);
-  return finalCards;
+  finalCards.cards = [...finalCards.stage3.cards];
+  finalCards.cards.push(...finalCards.stage2.cards);
+  finalCards.cards.push(...finalCards.stage1.cards);
+  console.log(finalCards);
+  return finalCards.cards;
 }
 
 
 ////////// --- FILL DOTS OF EVERY STAGE --- //////////
 function fillDots(ancient) {
-  const stage1 = document.querySelector('.stage1');
-  const stage2 = document.querySelector('.stage2');
-  const stage3 = document.querySelector('.stage3');
 
   stage1.querySelector('.green').innerHTML = ancient.firstStage.greenCards;
   stage1.querySelector('.blue').innerHTML = ancient.firstStage.blueCards;
